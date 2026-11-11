@@ -1,14 +1,13 @@
-# Étape 1 : Utiliser une image OpenJDK pour builder/exécuter l'application
-FROM eclipse-temurin:17-jdk-alpine
-
-# Définir le dossier de travail dans le conteneur
+# Étape 1 : Build du fichier JAR avec Maven
+FROM maven:3.9-eclipse-temurin-17-alpine AS builder
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copier le fichier JAR généré dans le conteneur
-COPY target/*.jar app.jar
-
-# Exposer le port de l'application
-EXPOSE 8081
-
-# Lancer l'application
+# Étape 2 : Image finale légère pour l'exécution
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
