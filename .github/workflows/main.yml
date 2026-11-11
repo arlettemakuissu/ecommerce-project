@@ -24,7 +24,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./backend/product-service
           file: ./backend/product-service/Dockerfile # Adaptez le chemin vers votre Dockerfile si nécessaire
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/ecommerce-backend:latest
